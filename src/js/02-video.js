@@ -9,11 +9,12 @@ const onPlayTime = function (timeupdate) {
   localStorage.setItem(TIME_CURRENT_KEY, JSON.stringify(timeupdate));
   console.log(timeupdate);
 };
+
 player.on('timeupdate', throttle(onPlayTime, 1000));
 
-const timeStop = localStorage.getItem(TIME_CURRENT_KEY);
+const timeStop = JSON.parse(localStorage.getItem(TIME_CURRENT_KEY));
 
 if (timeStop) {
-  player.setCurrentTime(timeStop);
+  player.setCurrentTime(timeStop.seconds);
 }
 console.log(timeStop);
