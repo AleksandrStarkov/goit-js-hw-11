@@ -12,7 +12,7 @@ const onPlayTime = function (timeupdate) {
 player.on('timeupdate', throttle(onPlayTime, 1000));
 
 const timeStop = localStorage.getItem(TIME_CURRENT_KEY);
-// const pausedTime = JSON.parse(timeStop);
+
 if (timeStop) {
   player.setCurrentTime(timeStop);
 }
