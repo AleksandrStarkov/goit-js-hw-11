@@ -7,8 +7,9 @@ const input = document.querySelector('input');
 
 form.addEventListener('input', throttle(onInputText, 500));
 form.addEventListener('submit', onFormSubmit);
+onFormData();
 
-const dataForm = {};
+const dataForm = { email: `${input.value}`, message: `${textarea.value}` };
 
 function onInputText(event) {
   dataForm[event.target.name] = event.target.value;
@@ -23,10 +24,10 @@ function onFormSubmit(event) {
 
 function onFormData() {
   const formData = JSON.parse(localStorage.getItem(LOCAL_TITLE_KEY));
+  //   console.log(formData.email);
   if (formData) {
-    input.value = formData.email;
-    textarea.value = formData.message;
-    console.log(formData);
+    input.value = formData.email || '';
+    textarea.value = formData.message || '';
+    // console.log(formData);
   }
 }
-onFormData();
