@@ -26,8 +26,8 @@ function onFormData() {
   const formData = JSON.parse(localStorage.getItem(LOCAL_TITLE_KEY));
   //   console.log(formData.email);
   if (formData) {
-    input.value = formData.email || '';
-    textarea.value = formData.message || '';
+    input.value = formData.email;
+    textarea.value = formData.message;
     // console.log(formData);
   }
 }
