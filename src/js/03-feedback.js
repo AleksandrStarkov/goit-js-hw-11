@@ -11,7 +11,7 @@ form.addEventListener('submit', onFormSubmit);
 onFormData();
 function onInputText(event) {
   const dataForm = { email: `${input.value}`, message: `${textarea.value}` };
-  dataForm[event.target.name] = event.target.value;
+  //   dataForm[event.target.name] = event.target.value;
   localStorage.setItem(LOCAL_TITLE_KEY, JSON.stringify(dataForm));
 }
 
