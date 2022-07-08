@@ -60,4 +60,5 @@ function hendlerSubmit(evt) {
         );
       });
   });
+  console.log(25);
 }
