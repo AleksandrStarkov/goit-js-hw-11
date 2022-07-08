@@ -59,6 +59,5 @@ function hendlerSubmit(evt) {
           `💥 Rejected promise ${position} in ${delay}ms`,
         );
       });
-    console.log(25);
   });
 }
