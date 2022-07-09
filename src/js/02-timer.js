@@ -9,7 +9,7 @@ const hoursVelue = document.querySelector('[ data-hours]');
 const minutesVelue = document.querySelector('[data-minutes]');
 const secondsVelue = document.querySelector('[ data-seconds]');
 const options = document.querySelector('#datetime-picker');
-
+let startTimer = 0;
 // console.log(Date.now());
 
 starBtn.setAttribute('disabled', 'disabled');

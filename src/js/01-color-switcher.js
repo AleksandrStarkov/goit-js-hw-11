@@ -12,7 +12,7 @@ btnStart.addEventListener('click', () => {
     document.body.style.backgroundColor = getRandomHexColor();
     btnStop.style.backgroundColor = getRandomHexColor();
     btnStart.style.backgroundColor = getRandomHexColor();
-  }, 500);
+  }, 1000);
 });
 btnStop.setAttribute('disabled', 'disabled');
 btnStop.addEventListener('click', () => {
