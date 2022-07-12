@@ -1,0 +1,22 @@
+{{#each this}}
+  <ul class='country-list'>
+
+    <li class='country-item'>
+      <img class='country-flag' src='${el.flags.svg}' alt='country-flag' />
+      <h1 class='country-name'>${el.name}</h1>
+    </li>
+
+    <li class='country-item'>
+      <h2 class='data'>Capital: ${el.capital}</h2>
+    </li>
+
+    <li class='country-item'>
+      <h2 class='data'>Population: ${el.population}</h2>
+    </li>
+
+    <li class='country-item'>
+      <h2 class='data'>Languages: ${lang}</h2>
+    </li>
+
+  </ul>
+{{/each}}
