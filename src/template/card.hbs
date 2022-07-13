@@ -1,22 +1,33 @@
 {{#each this}}
-  <ul class='country-list'>
+  <a href='{{largeImageURL}}' alt='{{tags}}' rel='noopener noreferrer'>
 
-    <li class='country-item'>
-      <img class='country-flag' src='${el.flags.svg}' alt='country-flag' />
-      <h1 class='country-name'>${el.name}</h1>
-    </li>
+    <div class='photo-card'>
 
-    <li class='country-item'>
-      <h2 class='data'>Capital: ${el.capital}</h2>
-    </li>
+      <img src='{{webformatURL}}' alt='{{tags}}' loading='lazy' />
+      <div class='info'>
 
-    <li class='country-item'>
-      <h2 class='data'>Population: ${el.population}</h2>
-    </li>
+        <p class='info-item'>
+          <b>Likes</b>
+          {{likes}}
+        </p>
 
-    <li class='country-item'>
-      <h2 class='data'>Languages: ${lang}</h2>
-    </li>
+        <p class='info-item'>
+          <b>Views</b>
+          {{views}}
+        </p>
 
-  </ul>
+        <p class='info-item'>
+          <b>Comments</b>
+          {{comments}}
+        </p>
+
+        <p class='info-item'>
+          <b>Downloads</b>
+          {{downloads}}
+        </p>
+      </div>
+
+    </div>
+
+  </a>
 {{/each}}

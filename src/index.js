@@ -1,104 +1,111 @@
 import './css/styles.css';
-import { fetchCountries } from './fetchCountries';
-import debounce from 'lodash.debounce';
-import Notiflix from 'notiflix';
+import articlesTpl from './template/card.hbs';
+import LoadMoreBtn from './js/load-more';
+import refs from './js/refs';
+// import Notiflix from 'notiflix';
+import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import SimpleLightbox from 'simplelightbox';
+import 'simplelightbox/dist/simple-lightbox.min.css';
+import NewApiServise from './js/serviceKey';
 
-const DEBOUNCE_DELAY = 300;
+const message = {
+  textNotFound:
+    '"Sorry, there are no images matching your search query. Please try again."',
+  textLastPage: "We're sorry, but you've reached the end of search results.",
+  textEmptyInput: 'Empty request, make your choice',
 
-const inputEl = document.querySelector('#search-box');
-const listEl = document.querySelector('.country-list');
-const infoEl = document.querySelector('.country-info');
+  notFound() {
+    Notify.failure(this.textNotFound);
+  },
+  lastPage() {
+    Notify.warning(this.textLastPage);
+  },
+  totalHits(value) {
+    Notify.info(`Hooray! We found ${value} images.`);
+  },
+  emptyInput() {
+    Notify.failure(this.textEmptyInput);
+  },
+};
 
-inputEl.addEventListener('input', debounce(onFormInputClick, DEBOUNCE_DELAY));
+const loadMoreBtn = new LoadMoreBtn({
+  selector: '[type="button"]',
+  hidden: true,
+});
+// console.log(loadMoreBtn);
 
-function onFormInputClick(evt) {
-  evt.preventDefault();
-  const search = evt.target.value.trim();
-
-  if (search === '') {
-    clearForm();
-    return;
-  }
-
-  fetchCountries(search)
-    .then(arr => {
-      if (arr.length > 10) {
-        clearForm();
-
-        Notiflix.Notify.info(
-          'Too many matches found. Please enter a more specific name.',
-          {
-            width: '450px',
-            position: 'center-center',
-            borderRadius: '30px',
-          },
-        );
-
-        return;
-      }
-
-      if (arr.length >= 2 && arr.length <= 10) {
-        createCountryList(arr);
-        clearInfo();
-        return;
-      } else {
-        createCountryList(arr);
-        createCountryCard(arr);
-        const countryName = document.querySelector('.name-country');
-        countryName.classList.add('name-country-card');
-      }
-    })
-    .catch(error => {
-      clearForm();
-      console.log(error);
-      // Notiflix.Notify.failure('Oops, there is no country with that name');
-      Notiflix.Notify.failure('Oops, there is no country with that name', {
-        width: '450px',
-        position: 'center-center',
-        borderRadius: '30px',
-      });
+const newsService = new NewApiServise();
+function updateArticlesMarkup(hits) {
+  const markup = articlesTpl(hits);
+  // console.log(markup);
+  if (markup !== '') {
+    refs.imgContainer.insertAdjacentHTML('beforeend', markup);
+    new SimpleLightbox('.gallery a', {
+      navText: ['<=', '=>'],
+      animationSpeed: '250ms',
+      captionPosition: 'bottom',
+      captionsData: 'alt',
+      captionDelay: '250ms',
     });
+    message.totalHits(newsService.getTotalHits());
+  } else {
+    message.notFound();
+    // loadMoreBtn.hide();
+  }
 }
 
-function createCountryList(arr) {
-  const createElements = arr
-    .map(el => {
-      return `<li class="item">
-                <img class="flag" src="${el.flags.svg}" alt="country-flag"   width="400" />
-                <h1 class="name-country">${el.name.official}</h1>
-              </li>`;
-    })
-    .join('');
+refs.searchForm.addEventListener('submit', searchFormSubmitHandler);
+loadMoreBtn.refs.button.addEventListener('click', fetchArticles);
 
-  listEl.innerHTML = createElements;
+function searchFormSubmitHandler(event) {
+  event.preventDefault();
+
+  const form = event.currentTarget;
+  newsService.query = form.elements.searchQuery.value;
+
+  clearArticlesContainer();
+  newsService.resetPage();
+  fetchArticles();
+  form.reset();
 }
 
-function createCountryCard(arr) {
-  const { capital, population, languages } = arr[0];
-  const valueLang = Object.values(languages);
+function fetchArticles() {
+  // loadMoreBtn.disable();
+  // loadMoreBtn.show();
 
-  const createCard = `
-                            <h2 class="data"> Capital: ${capital}</h2>
-                            <h3 class="data"> Population: ${population}</h3>
-                            <h3 class="data"> Languages: ${valueLang}</h3>
-                           `;
+  newsService.fetchArticles().then(hits => {
+    updateArticlesMarkup(hits);
 
-  infoEl.innerHTML = createCard;
+    if (hits.length !== 0) {
+      newsService.incrementPage();
+      loadMoreBtn.show();
+      // console.log(hits);
+    } else {
+      loadMoreBtn.hide();
+      return;
+    }
+  });
+
+  if (newsService.page !== newsService.totalPages) {
+    // console.log(newsService.page);
+    // console.log(newsService.totalPages);
+    // if (entries[0].isIntersecting) {
+    // newsService.increasePage();
+    // message.lastPage();
+    loadMoreBtn.hide();
+    // observer.unobserve(entries[0].target);
+    // observer.observe(document.querySelector('.photo-card:last-child'));
+    // }
+  }
+  return;
+  // } else {
+  //   // if (entries[0].isIntersecting) {
+  //   // observer.unobserve(entries[0].target);
+  //   message.lastPage();
+  //   // }
+  // }
 }
 
-function clearInfo() {
-  inputEl.innerHTML = '';
+function clearArticlesContainer() {
+  refs.imgContainer.innerHTML = '';
 }
-
-function clearForm() {
-  listEl.innerHTML = '';
-  infoEl.innerHTML = '';
-}
-
-// li class="country-item">
-//                             <h2 class="data"> Population: ${population}</h2>
-//                         </li>
-
-//                         <li class="country-item">
-//                             <h2 class="data"> Languages: ${valueLang}</h2>
-//                         </li>
