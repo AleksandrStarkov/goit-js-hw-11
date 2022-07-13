@@ -47,7 +47,7 @@ function updateArticlesMarkup(hits) {
       captionsData: 'alt',
       captionDelay: '250ms',
     });
-    message.totalHits(newsService.getTotalHits());
+    // message.totalHits(newsService.getTotalHits());
   } else {
     message.notFound();
     // loadMoreBtn.hide();
@@ -57,56 +57,49 @@ function updateArticlesMarkup(hits) {
 refs.searchForm.addEventListener('submit', searchFormSubmitHandler);
 loadMoreBtn.refs.button.addEventListener('click', fetchArticles);
 
-function searchFormSubmitHandler(event) {
+async function searchFormSubmitHandler(event) {
   event.preventDefault();
 
   const form = event.currentTarget;
   newsService.query = form.elements.searchQuery.value;
+
   if (newsService.query.trim() === '') {
     message.notFound();
+    clearArticlesContainer();
+    loadMoreBtn.hide();
     return;
   }
-  clearArticlesContainer();
   newsService.resetPage();
-  fetchArticles();
+  const imeges = await newsService.fetchArticles();
+  refs.imgContainer.innerHTML = articlesTpl(imeges);
+  // updateArticlesMarkup(imeges);
+  console.log(imeges);
+  console.log(articlesTpl(imeges));
+  console.log(refs.imgContainer);
+  if (newsService.page < newsService.totalPages) {
+    loadMoreBtn.show();
+  }
+
+  // clearArticlesContainer();
+
   form.reset();
 }
 
 function fetchArticles() {
-  // loadMoreBtn.disable();
-  // loadMoreBtn.show();
+  newsService.incrementPage();
 
   newsService.fetchArticles().then(hits => {
-    updateArticlesMarkup(hits);
-
     if (hits.length !== 0) {
-      newsService.incrementPage();
-      loadMoreBtn.show();
-      // console.log(hits);
+      updateArticlesMarkup(hits);
     } else {
       loadMoreBtn.hide();
       return;
     }
   });
 
-  if (newsService.page !== newsService.totalPages) {
-    // console.log(newsService.page);
-    // console.log(newsService.totalPages);
-    // if (entries[0].isIntersecting) {
-    // newsService.increasePage();
-    // message.lastPage();
+  if (newsService.page === newsService.totalPages) {
     loadMoreBtn.hide();
-    // observer.unobserve(entries[0].target);
-    // observer.observe(document.querySelector('.photo-card:last-child'));
-    // }
   }
-  return;
-  // } else {
-  //   // if (entries[0].isIntersecting) {
-  //   // observer.unobserve(entries[0].target);
-  //   message.lastPage();
-  //   // }
-  // }
 }
 
 function clearArticlesContainer() {

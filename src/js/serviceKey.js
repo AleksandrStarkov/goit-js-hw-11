@@ -18,12 +18,12 @@ export default class NewApiServise {
       orientation: 'horizontal',
       safesearch: 'true',
       page: this.page,
-      per_page: '40',
+      per_page: '200',
     });
     try {
       const response = await axios.get(`${this.#BASE_URL}/api/?${options}`);
 
-      this.totalPages = Math.ceil(response.data.totalHits / 40);
+      this.totalPages = Math.ceil(response.data.totalHits / 200);
       this.totalHits = response.data.totalHits;
 
       return response.data.hits;
