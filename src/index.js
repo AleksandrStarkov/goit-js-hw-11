@@ -62,7 +62,10 @@ function searchFormSubmitHandler(event) {
 
   const form = event.currentTarget;
   newsService.query = form.elements.searchQuery.value;
-
+  if (newsService.query.trim() === '') {
+    message.notFound();
+    return;
+  }
   clearArticlesContainer();
   newsService.resetPage();
   fetchArticles();
